@@ -120,3 +120,90 @@ body.dark .swap:hover{background:#1b2126}
     margin:auto!important;
   }
 }
+
+/* equilíbrio do planejador v21 */
+.wrap{width:calc(100% - 32px);max-width:1120px;margin-inline:auto}
+.planner{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr);
+  align-items:stretch;
+}
+.planner .field:nth-of-type(2){border-left:0}
+.swap{
+  grid-column:2;
+  grid-row:1;
+  width:58px!important;
+  min-width:58px!important;
+  min-height:0!important;
+  align-self:stretch;
+  border-top:0!important;
+  border-bottom:0!important;
+  border-left:1px solid #c7d0d7!important;
+  border-right:1px solid #c7d0d7!important;
+  background:#edf1f4!important;
+  color:inherit!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+}
+.swap::after{display:none!important;content:none!important}
+.swap-icon{
+  width:36px;
+  height:36px;
+  border:1px solid #c3ccd3;
+  border-radius:50%;
+  background:#fff;
+  color:#17212a;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  justify-items:center;
+  padding:0 7px;
+  box-shadow:0 2px 6px rgba(28,37,45,.06);
+}
+.swap-icon span{
+  display:block;
+  font-family:Arial,"Segoe UI",sans-serif;
+  font-size:16px;
+  font-weight:700;
+  line-height:1;
+}
+.planner .go{
+  grid-column:1 / -1;
+  grid-row:2;
+  min-height:58px;
+  width:100%;
+  border-top:1px solid rgba(0,0,0,.06);
+}
+body.dark .swap{
+  background:#151a1e!important;
+  border-color:#394149!important;
+}
+body.dark .swap-icon{
+  background:#252c32;
+  border-color:#48525a;
+  color:#f0f3f5;
+  box-shadow:none;
+}
+@media(max-width:820px){
+  .wrap{width:calc(100% - 20px)}
+  .planner{grid-template-columns:1fr}
+  .planner .field:first-child{grid-column:1;grid-row:1}
+  .swap{
+    grid-column:1;
+    grid-row:2;
+    width:100%!important;
+    min-width:0!important;
+    min-height:64px!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-top:1px solid #c7d0d7!important;
+    border-bottom:1px solid #c7d0d7!important;
+  }
+  .planner .field:nth-of-type(2){grid-column:1;grid-row:3;border-top:0}
+  .planner .go{grid-column:1;grid-row:4}
+}
+@media(max-width:460px){
+  .wrap{width:calc(100% - 16px)}
+}
