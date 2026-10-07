@@ -121,7 +121,53 @@ body.dark .secondary:hover{background:#252c32}
 }
 
 @media(max-width:380px){.nav a[href="#sobre"]{display:none}.nav a{font-size:13px;padding:0 5px}.brandtext strong{font-size:16px}}
-</style>
+
+/* revisão mobile e dados · out/2026 */
+.status-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.status-strip span{display:inline-flex;align-items:center;min-height:30px;padding:6px 9px;border:1px solid rgba(26,29,33,.11);background:rgba(255,255,255,.62);border-radius:9px;color:#414950;font-size:11px;font-weight:650}
+.field label{font-size:12px;font-weight:700;color:#3f4850}
+.field select{font-size:17px;font-weight:600;min-height:28px}
+.day-tabs{display:flex;gap:8px;padding:11px 22px;border-bottom:1px solid var(--rule);background:#f6f8f9}
+.day-tabs button{min-height:40px;padding:8px 13px;border:1px solid var(--rule);border-radius:9px;background:#fff;font-size:12px;font-weight:650;cursor:pointer}
+.day-tabs button.active{background:#23262a;color:#fff;border-color:#23262a}
+.departure small{display:block;margin-top:5px;color:var(--muted);font-size:10px}
+.departure-empty{grid-column:1/-1;min-height:auto}
+.time-empty{grid-column:1/-1}
+body.dark .status-strip span{background:#20262c;border-color:#343c43;color:#dce1e5}
+body.dark .day-tabs{background:#171c20;border-color:#343c43}
+body.dark .day-tabs button{background:#1d2328;color:#eef1f3;border-color:#3a434b}
+body.dark .day-tabs button.active{background:#f0f2f3;color:#17191c;border-color:#f0f2f3}
+@media(max-width:820px){
+  .hero-copy{max-width:none}
+  .hero p{font-size:15px;line-height:1.45}
+  .planner{grid-template-columns:1fr}
+  .swap{display:grid;width:100%;min-height:44px;place-items:center;border-left:0;border-top:1px solid var(--rule);background:#f8fafb}
+  .go{min-height:54px;font-size:16px}
+  .field{padding:16px 17px}
+  .field label{font-size:12px}
+  .field select{font-size:17px}
+  .secondary{min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+  .schedule-tabs button,.schedule-toolbar button,.day-tabs button{min-height:44px;font-size:13px}
+}
+@media(max-width:460px){
+  .nav a[href="#linhas"],.nav a[href="#sobre"]{display:none}
+  .hero{padding-top:22px}
+  .hero h1{font-size:32px}
+  .hero p{font-size:14px}
+  .status-strip{margin-top:11px;gap:6px}
+  .status-strip span{font-size:10.5px;min-height:28px}
+  .best-top{gap:12px}
+  .eta{display:block}
+  .eta strong{font-size:29px}
+  .eta span{display:block;margin-top:4px;font-size:12px}
+  .action-row{display:grid;grid-template-columns:1fr 1fr}
+  .alt-item{grid-template-columns:32px minmax(0,1fr)}
+  .alt-time{grid-column:2;text-align:left}
+  .schedule-intro{display:block}
+  .schedule-intro>span{display:block;margin-top:7px;font-size:11px}
+  .day-tabs{padding:9px 16px}
+}
+\n</style>
 </head>
 <body>
 <header class="topbar"><div class="wrap"><div class="brand"><div class="brandmark">VC</div><div class="brandtext"><strong>Vai de Circular</strong><span>UFRN</span></div></div><nav class="nav"><a href="#linhas">Linhas</a><a href="#horarios">Horários</a><a href="#sobre">Sobre</a><button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema" title="Alternar tema">◐</button></nav></div></header>
@@ -129,40 +175,44 @@ body.dark .secondary:hover{background:#252c32}
 <section class="hero"><div class="wrap"><div class="hero-copy"><div class="eyebrow">Circular da UFRN</div><h1>Escolha de onde sai e para onde vai.</h1><p>A ferramenta compara as linhas e mostra a melhor opção estimada — sem esconder as alternativas.</p></div>
 <div class="planner card"><div class="field"><label>De</label><select id="origin"></select></div><button class="swap" id="swapBtn" title="Inverter origem e destino">↕</button><div class="field"><label>Para</label><select id="dest"></select></div><button class="go" id="findBtn">Ver melhor opção</button></div></div></section>
 
-<section class="section result-section"><div class="wrap"><div class="section-head"><div><h2>Melhor opção agora</h2></div><p>Estimativa com base nos horários de referência.</p></div><div class="best-card card" id="bestCard"></div></div></section>
+<section class="section result-section"><div class="wrap"><div class="section-head"><div><h2>Melhor opção agora</h2></div><p>Estimativa com base nos horários de referência.</p></div><div class="best-card card" id="bestCard" aria-live="polite"></div></div></section>
 
-<section class="section route-section"><div class="wrap"><div class="section-head"><div><h2>Seu trajeto</h2></div><p>Paradas em ordem, sem mapa.</p></div><div class="route-card card" id="routeCard"></div></div></section>
+<section class="section route-section"><div class="wrap"><div class="section-head"><div><h2>Seu trajeto</h2></div><p>Passagens intermediárias são estimadas.</p></div><div class="route-card card" id="routeCard"></div></div></section>
 
-<section class="section"><div class="wrap"><div class="section-head"><div><h2>Próximas saídas</h2></div><p>Saídas programadas do Via Direta.</p></div><div class="departures" id="departures"></div></div></section>
+<section class="section"><div class="wrap"><div class="section-head"><div><h2>Próximas saídas</h2></div><p id="departureContext">Próximas saídas programadas da Via Direta.</p></div><div class="departures" id="departures"></div></div></section>
 
 <section class="section" id="linhas"><div class="wrap"><div class="section-head"><div><h2>Conheça as linhas</h2></div><p>O essencial para entender cada uma.</p></div><div class="lines" id="lineCards"></div></div></section>
 
-<section class="section" id="horarios"><div class="wrap"><div class="section-head"><div><h2>Todos os horários</h2></div><p>Para consultar agora ou se programar depois.</p></div><div class="schedule card"><div class="schedule-intro"><div><h3>Horários de referência</h3><span>Selecione uma linha e o terminal de saída.</span></div><span>em validação</span></div><div class="schedule-tabs" id="scheduleTabs"></div><div class="schedule-toolbar" id="terminalTabs"></div><div class="times-grid" id="timesGrid"></div><div class="schedule-foot">Os horários exibidos são de referência. As estimativas de passagem podem variar conforme a operação e o trânsito.</div></div></div></section>
+<section class="section" id="horarios"><div class="wrap"><div class="section-head"><div><h2>Todos os horários</h2></div><p>Para consultar agora ou se programar depois.</p></div><div class="schedule card"><div class="schedule-intro"><div><h3>Horários de referência</h3><span>Selecione uma linha e o terminal de saída.</span></div><span id="scheduleStatus">Circular conferido no Terminal RU · out/2026</span></div><div class="day-tabs" id="dayTabs"></div><div class="schedule-tabs" id="scheduleTabs"></div><div class="schedule-toolbar" id="terminalTabs"></div><div class="times-grid" id="timesGrid"></div><div class="schedule-foot">Nos dias úteis, os horários do Circular Direto e Inverso foram conferidos nas tabelas afixadas no Terminal RU em outubro de 2026. Expresso e sábado permanecem como horários de referência. Horários fora dos terminais são estimativas e podem variar com a operação e o trânsito.</div></div></div></section>
 
-<section class="about" id="sobre"><div class="wrap"><div class="about-line"><strong>Vai de Circular · UFRN</strong><span>Sem coleta de localização. Sem rastreamento em tempo real. Dados e estimativas apresentados de forma independente.</span></div></div></section>
+<section class="about" id="sobre"><div class="wrap"><div class="about-line"><strong>Vai de Circular · UFRN</strong><span>Página independente para consulta rápida no navegador. Sem coleta de localização e sem rastreamento em tempo real.</span></div></div></section>
 </main>
 <button class="to-top" id="toTop" type="button" aria-label="Voltar ao início">↑</button>
 <script>
+const addClock=(t,delta)=>{const[a,b]=t.split(':').map(Number),v=a*60+b+delta;return String(Math.floor(v/60)%24).padStart(2,'0')+':'+String(v%60).padStart(2,'0')};
+const directRu=['06:20','06:40','07:00','07:20','07:30','08:00','08:30','09:00','09:30','10:00','10:10','10:30','11:00','11:20','11:30','11:50','12:05','12:25','12:50','13:10','13:30','14:00','14:30','15:00','15:30','16:10','16:40','17:20','17:40','18:00','18:20','18:40','19:00','19:20','19:50','20:10','20:30','20:40','21:10','21:30','21:45','22:00','22:20'];
+const inverseRu=['06:30','06:50','07:10','07:30','07:50','08:10','08:40','09:10','09:40','10:10','10:40','11:00','11:20','11:40','12:00','12:15','12:35','12:50','13:10','13:30','13:40','14:20','14:40','15:00','15:30','16:00','16:30','16:50','17:10','17:30','17:50','18:10','18:30','18:50','19:30','20:10','20:40','21:10','21:20','21:40','21:50','22:10','22:20'];
 const schedule={
- vd:{D:['06:15','06:35','06:55','07:15','07:35','07:45','08:15','08:45','09:15','09:45','10:15','10:25','10:45','11:15','11:35','11:45','12:05','12:25','12:45','13:05','13:25','13:45','14:15','14:45','15:15','15:45','16:25','16:55','17:35','17:55','18:15','18:35','18:55','19:15','19:35','20:05','20:25','20:45','20:55','21:25','21:45','22:05','22:15'],I:['06:30','06:40','07:00','07:20','07:40','08:00','08:20','08:50','09:20','09:50','10:20','10:50','11:10','11:30','11:50','12:10','12:30','12:50','13:00','13:20','13:40','13:50','14:30','14:50','15:10','15:40','16:10','16:40','17:00','17:20','17:40','18:00','18:20','18:40','19:00','19:40','20:20','20:50','21:20','21:30','21:50','22:00','22:20'],ECT:['06:35','06:45','06:55','07:05','07:15','07:25','07:45','08:05','08:15','08:25','08:35','08:45','08:55','09:05','09:15','09:25','09:45','10:05','10:15','10:35','10:55','11:15','11:25','11:45','11:55','12:05','12:15','12:25','12:35','12:45','12:55','13:05','13:15','13:25','13:45','14:05','14:25','14:35','14:45','15:05','15:25','15:35','15:45','16:05','16:25','16:45','16:55','17:05','17:15','17:25','17:35','17:45','17:55','18:05','18:15','18:25','18:35','18:45','18:55','19:05','19:25','19:35','19:55','20:15','20:35','20:45','20:55','21:05','21:15','21:25','21:35','21:45','21:55','22:05','22:15','22:25'],ER:['06:30','06:40','06:50','07:00','07:10','07:20','07:30','07:40','07:50','08:00','08:10','08:20','08:30','08:40','08:50','09:00','09:20','09:40','10:00','10:20','10:40','11:00','11:20','11:40','11:55','12:00','12:10','12:20','12:30','12:40','12:50','13:00','13:10','13:20','13:30','13:40','13:50','14:00','14:20','14:40','15:00','15:10','15:20','15:30','15:50','16:10','16:30','16:40','16:50','17:00','17:10','17:20','17:30','17:40','17:50','18:00','18:10','18:20','18:30','18:40','18:50','19:00','19:20','19:40','20:00','20:10','20:20','20:30','20:40']},
- ru:{D:['06:20','06:40','07:00','07:20','07:30','08:00','08:30','09:00','09:30','10:00','10:10','10:30','11:00','11:20','11:30','11:50','12:05','12:25','12:50','13:10','13:30','14:00','14:30','15:00','15:30','16:10','16:40','17:20','17:40','18:00','18:20','18:40','19:00','19:20','19:50','20:10','20:30','20:40','21:10','21:30','21:45','22:00','22:20'],I:['06:30','06:50','07:10','07:30','07:50','08:10','08:40','09:10','09:40','10:10','10:40','11:00','11:20','11:40','12:00','12:15','12:35','12:50','13:10','13:30','13:40','14:20','14:40','15:00','15:30','16:00','16:30','16:50','17:10','17:30','17:50','18:10','18:30','18:50','19:30','20:10','20:40','21:10','21:20','21:40','21:50','22:10','22:20']}
+ vd:{D:['06:15',...directRu.map(t=>addClock(t,15))],I:['06:30',...inverseRu.map(t=>addClock(t,10))],ECT:['06:35','06:45','06:55','07:05','07:15','07:25','07:45','08:05','08:15','08:25','08:35','08:45','08:55','09:05','09:15','09:25','09:45','10:05','10:15','10:35','10:55','11:15','11:25','11:45','11:55','12:05','12:15','12:25','12:35','12:45','12:55','13:05','13:15','13:25','13:45','14:05','14:25','14:35','14:45','15:05','15:25','15:35','15:45','16:05','16:25','16:45','16:55','17:05','17:15','17:25','17:35','17:45','17:55','18:05','18:15','18:25','18:35','18:45','18:55','19:05','19:25','19:35','19:55','20:15','20:35','20:45','20:55','21:05','21:15','21:25','21:35','21:45','21:55','22:05','22:15','22:25'],ER:['06:30','06:40','06:50','07:00','07:10','07:20','07:30','07:40','07:50','08:00','08:10','08:20','08:30','08:40','08:50','09:00','09:20','09:40','10:00','10:20','10:40','11:00','11:20','11:40','11:55','12:00','12:10','12:20','12:30','12:40','12:50','13:00','13:10','13:20','13:30','13:40','13:50','14:00','14:20','14:40','15:00','15:10','15:20','15:30','15:50','16:10','16:30','16:40','16:50','17:00','17:10','17:20','17:30','17:40','17:50','18:00','18:10','18:20','18:30','18:40','18:50','19:00','19:20','19:40','20:00','20:10','20:20','20:30','20:40']},
+ ru:{D:directRu,I:inverseRu,S:['06:15','06:45','07:15','07:45','08:15','08:45','09:15','09:45','10:15','11:45','12:15','12:45','13:15','13:45','14:15']}
 };
 const routes={
- D_vd:{line:'D',terminal:'vd',stops:[['vd','Via Direta',0],['artes','Artes',2],['musica','Música',3],['reitoria','Reitoria',7],['edf','Ed. Física',9],['saude','Saúde',11],['ru','Terminal RU',15]]},
- D_ru:{line:'D',terminal:'ru',stops:[['ru','Terminal RU',0],['piscinas','Piscinas',1],['setor15','Setores I/V',3],['setor2','Setor II',4],['geologia','Geologia',5],['eng','Engenharias',6],['ect','ECT',7],['cb','Biociências',9],['nuplam','NUPLAM',10],['editora','Editora',11],['santos','S. Dumont',12],['floriano','Floriano',13],['igreja','S. Afonso',14],['vd','Via Direta',15]]},
- I_vd:{line:'I',terminal:'vd',stops:[['vd','Via Direta',0],['artes','Artes',2],['musica','Música',3],['cb','Biociências',5],['ect','ECT',6],['eng','Engenharias',8],['geologia','Geologia',9],['setor2','Setor II',10],['setor15','Setores I/V',11],['piscinas','Piscinas',12],['saude','Saúde',12],['imd','IMD / Residência',14],['ru','Terminal RU',15]]},
- I_ru:{line:'I',terminal:'ru',stops:[['ru','Terminal RU',0],['edf','Ed. Física',2],['reitoria','Reitoria',4],['editora','Editora',6],['santos','S. Dumont',7],['floriano','Floriano',8],['igreja','S. Afonso',9],['vd','Via Direta',10]]},
- ER_vd:{line:'ER',terminal:'vd',stops:[['vd','Via Direta',0],['reitoria','Reitoria',5]]},
- ECT_vd:{line:'ECT',terminal:'vd',stops:[['vd','Via Direta',0],['ect','ECT',5]]}
+ D_ru:{line:'D',terminal:'ru',day:'weekday',stops:[['ru','Terminal RU',0],['fisio','Fisio / Piscina',1],['ccsa','CCSA',2],['cchla','CCHLA / CE',3],['geo','Geologia',4],['petr','Lab. Petróleo',5],['cet','C&T / ECT',6],['cb','Biociências',8],['nu','NUPLAM',9],['edit','Editora',10],['por','Portão 2',11],['gin','Ginásio Mirassol',12],['igre','Igreja Mirassol',13],['via','Via Direta',15],['deart','Artes',17],['mus','Música',19],['rei','Reitoria',21],['def','Educação Física',23],['ru','Terminal RU',30]]},
+ D_vd:{line:'D',terminal:'vd',day:'weekday',stops:[['via','Via Direta',0],['deart','Artes',2],['mus','Música',4],['rei','Reitoria',6],['def','Educação Física',8],['ru','Terminal RU',15]]},
+ I_ru:{line:'I',terminal:'ru',day:'weekday',stops:[['ru','Terminal RU',0],['def','Educação Física',1],['rei','Reitoria',2],['edit','Editora',4],['por','Portão 2',5],['gin','Ginásio Mirassol',6],['igre','Igreja Mirassol',7],['via','Via Direta',10],['deart','Artes',13],['mus','Música',15],['cb','Biociências',16],['cet','C&T / ECT',18],['petr','Lab. Petróleo',19],['geo','Geologia',20],['cchla','CCHLA / CE',21],['ccsa','CCSA',22],['fisio','Fisio / Piscina',23],['poti','Potilândia',25],['imd','IMD / Residência',27],['ru','Terminal RU',30]]},
+ I_vd:{line:'I',terminal:'vd',day:'weekday',stops:[['via','Via Direta',0],['deart','Artes',3],['mus','Música',5],['cb','Biociências',6],['cet','C&T / ECT',8],['petr','Lab. Petróleo',9],['geo','Geologia',10],['cchla','CCHLA / CE',11],['ccsa','CCSA',12],['fisio','Fisio / Piscina',13],['poti','Potilândia',15],['imd','IMD / Residência',17],['ru','Terminal RU',20]]},
+ ER_vd:{line:'ER',terminal:'vd',day:'weekday',stops:[['via','Via Direta',0],['rei','Reitoria',5]]},
+ ECT_vd:{line:'ECT',terminal:'vd',day:'weekday',stops:[['via','Via Direta',0],['cet','C&T / ECT',5]]},
+ S_ru:{line:'S',terminal:'ru',day:'saturday',stops:[['ru','Terminal RU',0],['fisio','Fisio / Piscina',1],['ccsa','CCSA',2],['cchla','CCHLA / CE',3],['geo','Geologia',4],['petr','Lab. Petróleo',5],['cet','C&T / ECT',5],['cb','Biociências',6],['nu','NUPLAM',6],['edit','Editora',7],['por','Portão 2',8],['gin','Ginásio Mirassol',8],['igre','Igreja Mirassol',9],['via','Via Direta',12],['deart','Artes',16],['mus','Música',17],['rei','Reitoria',18],['def','Educação Física',19],['ru','Terminal RU',25]]}
 };
-const names={D:'Circular Direto',I:'Circular Inverso',ER:'Expresso Reitoria',ECT:'Expresso C&T'};
-const colors={D:'#f5c400',I:'#ef7b32',ER:'#3977d5',ECT:'#7d5bc5'};
-const stopNames={vd:'Via Direta',ru:'Terminal RU',reitoria:'Reitoria',ect:'Escola de Ciências e Tecnologia',artes:'Departamento de Artes',musica:'Escola de Música',cb:'Centro de Biociências',edf:'Educação Física',setor2:'Setor II',setor15:'Setores I e V',geologia:'Geologia',eng:'Engenharias',piscinas:'Piscinas',saude:'Escola de Saúde',imd:'IMD / Residência',editora:'Editora Universitária',nuplam:'NUPLAM',santos:'Acesso Santos Dumont',floriano:'Floriano Cavalcanti',igreja:'Santo Afonso'};
+const names={D:'Circular Direto',I:'Circular Inverso',ER:'Expresso Reitoria',ECT:'Expresso C&T',S:'Circular de sábado'};
+const colors={D:'#f5c400',I:'#ef7b32',ER:'#3977d5',ECT:'#5f65d8',S:'#f5c400'};
+const stopNames={via:'Via Direta',ru:'Terminal RU',rei:'Reitoria',cet:'C&T / ECT',imd:'IMD / Residência',ccsa:'CCSA · Setores I e V',cchla:'CCHLA / CE · Setor II',cb:'Centro de Biociências / Morfologia',fisio:'Fisio / Piscina',geo:'Geologia',petr:'Laboratório de Petróleo',nu:'NUPLAM',edit:'Editora Universitária',poti:'Potilândia',gin:'Ginásio Mirassol',igre:'Igreja Mirassol',deart:'Departamento de Artes',mus:'Escola de Música',def:'Educação Física (DEF)',por:'Portão 2'};
 const descriptions={
- D:'Conecta Via Direta e Terminal RU. No sentido Via Direta → RU, passa pelo trecho interno com Reitoria e Educação Física.',
- I:'Faz o percurso complementar ao Direto. No sentido Via Direta → RU, atende pontos como Biociências, ECT, Geologia e Setor II.',
- ER:'Ligação expressa entre Via Direta e Reitoria, sem paradas intermediárias.',
- ECT:'Ligação expressa entre Via Direta e a Escola de Ciências e Tecnologia, sem paradas intermediárias.'
+ D:'Sai do Terminal RU, cruza o campus, passa pela Via Direta e retorna ao RU pelo trecho de Reitoria e Educação Física.',
+ I:'Faz o percurso complementar ao Direto, passando cedo por Reitoria e Via Direta antes de seguir por C&T, Geologia e setores.',
+ ER:'Ligação expressa da Via Direta para a Reitoria. Tempo de passagem e chegada é estimado.',
+ ECT:'Ligação expressa da Via Direta para C&T / ECT. Tempo de passagem e chegada é estimado.'
 };
 function lineCode(l){return l==='ECT'?'EC&T':l}
 function m(t){const[a,b]=t.split(':').map(Number);return a*60+b}
