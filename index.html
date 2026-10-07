@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5c400">
+<meta name="theme-color" content="#f5c400">\n<meta name="description" content="Horários, rotas e estimativas do Circular da UFRN para consulta rápida no navegador.">
 <title>Vai de Circular — UFRN</title>
 <style>
 :root{
@@ -167,13 +167,12 @@ body.dark .day-tabs button.active{background:#f0f2f3;color:#17191c;border-color:
   .schedule-intro>span{display:block;margin-top:7px;font-size:11px}
   .day-tabs{padding:9px 16px}
 }
-\n</style>
+</style>
 </head>
 <body>
 <header class="topbar"><div class="wrap"><div class="brand"><div class="brandmark">VC</div><div class="brandtext"><strong>Vai de Circular</strong><span>UFRN</span></div></div><nav class="nav"><a href="#linhas">Linhas</a><a href="#horarios">Horários</a><a href="#sobre">Sobre</a><button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema" title="Alternar tema">◐</button></nav></div></header>
 <main>
-<section class="hero"><div class="wrap"><div class="hero-copy"><div class="eyebrow">Circular da UFRN</div><h1>Escolha de onde sai e para onde vai.</h1><p>A ferramenta compara as linhas e mostra a melhor opção estimada — sem esconder as alternativas.</p></div>
-<div class="planner card"><div class="field"><label>De</label><select id="origin"></select></div><button class="swap" id="swapBtn" title="Inverter origem e destino">↕</button><div class="field"><label>Para</label><select id="dest"></select></div><button class="go" id="findBtn">Ver melhor opção</button></div></div></section>
+<section class="hero"><div class="wrap"><div class="hero-copy"><div class="eyebrow">Circular da UFRN · Campus Central</div><h1>Para onde você vai?</h1><p>Escolha a origem e o destino. O Vai de Circular compara as linhas e mostra a opção estimada mais rápida agora.</p><div class="status-strip"><span id="serviceBadge">Dias úteis</span><span>Horários conferidos no Terminal RU · out/2026</span></div></div>\n<div class="planner card"><div class="field"><label for="origin">De onde</label><select id="origin"></select></div><button class="swap" id="swapBtn" type="button" aria-label="Inverter origem e destino" title="Inverter origem e destino">⇅</button><div class="field"><label for="dest">Para onde</label><select id="dest"></select></div><button class="go" id="findBtn" type="button">Ver melhor opção</button></div></div></section>
 
 <section class="section result-section"><div class="wrap"><div class="section-head"><div><h2>Melhor opção agora</h2></div><p>Estimativa com base nos horários de referência.</p></div><div class="best-card card" id="bestCard" aria-live="polite"></div></div></section>
 
@@ -291,7 +290,7 @@ function renderLineCards(){
  let html='';['D','I','ER','ECT'].forEach(l=>{const note=l==='ER'?'Via Direta → Reitoria':l==='ECT'?'Via Direta → C&T / ECT':'Percurso circular pelo Campus Central';html+='<article class="line-card card '+(l==='D'?'d':'')+'" style="--c:'+colors[l]+'"><div class="line-code">'+lineCode(l)+'</div><h3>'+names[l]+'</h3><p>'+descriptions[l]+'</p><div class="line-note">'+note+'</div></article>'});document.getElementById('lineCards').innerHTML=html;
 }
 
-let activeScheduleDay='weekday',activeLine='D',activeTerminal='vd';
+let activeScheduleDay=dayType()==='saturday'?'saturday':'weekday',activeLine=dayType()==='saturday'?'S':'D',activeTerminal=dayType()==='saturday'?'ru':'vd';
 function renderDayTabs(){
  const box=document.getElementById('dayTabs');if(!box)return;box.innerHTML='';
  [['weekday','Dias úteis'],['saturday','Sábado']].forEach(([id,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.className=id===activeScheduleDay?'active':'';b.onclick=()=>{activeScheduleDay=id;activeLine=id==='weekday'?'D':'S';activeTerminal=id==='weekday'?'vd':'ru';renderDayTabs();renderScheduleTabs();renderTerminalTabs();renderTimes()};box.appendChild(b)});
