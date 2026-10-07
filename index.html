@@ -232,7 +232,10 @@ function candidates(o,d){
   if(r.day!==service)return;
   const seg=findSegment(r.stops,o,d);if(!seg)return;
   const arr=(schedule[r.terminal]||{})[r.line]||[];if(!arr.length)return;
-  const pass=next(arr,r.stops[seg.a][2]);if(pass===null)return;
+  const trip=nextTrip(arr,r.stops[seg.a][2]);if(!trip)return;
+  const viaOffset=r.line==='D'?15:r.line==='I'?10:null;
+  if(r.terminal==='ru'&&viaOffset!==null&&trip.index===arr.length-1&&r.stops[seg.b][2]>viaOffset)return;
+  const pass=trip.pass;
   out.push({r,line:r.line,pass,wait:pass-n,arrival:pass+(r.stops[seg.b][2]-r.stops[seg.a][2]),a:seg.a,b:seg.b});
  });
  const seen=new Set();
