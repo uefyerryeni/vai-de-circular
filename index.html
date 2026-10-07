@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5c400">\n<meta name="description" content="Horários, rotas e estimativas do Circular da UFRN para consulta rápida no navegador.">
+<meta name="theme-color" content="#f5c400">
+<meta name="description" content="Horários, rotas e estimativas do Circular da UFRN para consulta rápida no navegador.">
 <title>Vai de Circular — UFRN</title>
 <style>
 :root{
@@ -172,7 +173,8 @@ body.dark .day-tabs button.active{background:#f0f2f3;color:#17191c;border-color:
 <body>
 <header class="topbar"><div class="wrap"><div class="brand"><div class="brandmark">VC</div><div class="brandtext"><strong>Vai de Circular</strong><span>UFRN</span></div></div><nav class="nav"><a href="#linhas">Linhas</a><a href="#horarios">Horários</a><a href="#sobre">Sobre</a><button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema" title="Alternar tema">◐</button></nav></div></header>
 <main>
-<section class="hero"><div class="wrap"><div class="hero-copy"><div class="eyebrow">Circular da UFRN · Campus Central</div><h1>Para onde você vai?</h1><p>Escolha a origem e o destino. O Vai de Circular compara as linhas e mostra a opção estimada mais rápida agora.</p><div class="status-strip"><span id="serviceBadge">Dias úteis</span><span>Horários conferidos no Terminal RU · out/2026</span></div></div>\n<div class="planner card"><div class="field"><label for="origin">De onde</label><select id="origin"></select></div><button class="swap" id="swapBtn" type="button" aria-label="Inverter origem e destino" title="Inverter origem e destino">⇅</button><div class="field"><label for="dest">Para onde</label><select id="dest"></select></div><button class="go" id="findBtn" type="button">Ver melhor opção</button></div></div></section>
+<section class="hero"><div class="wrap"><div class="hero-copy"><div class="eyebrow">Circular da UFRN · Campus Central</div><h1>Para onde você vai?</h1><p>Escolha a origem e o destino. O Vai de Circular compara as linhas e mostra a opção estimada mais rápida agora.</p><div class="status-strip"><span id="serviceBadge">Dias úteis</span><span>Horários conferidos no Terminal RU · out/2026</span></div></div>
+<div class="planner card"><div class="field"><label for="origin">De onde</label><select id="origin"></select></div><button class="swap" id="swapBtn" type="button" aria-label="Inverter origem e destino" title="Inverter origem e destino">⇅</button><div class="field"><label for="dest">Para onde</label><select id="dest"></select></div><button class="go" id="findBtn" type="button">Ver melhor opção</button></div></div></section>
 
 <section class="section result-section"><div class="wrap"><div class="section-head"><div><h2>Melhor opção agora</h2></div><p>Estimativa com base nos horários de referência.</p></div><div class="best-card card" id="bestCard" aria-live="polite"></div></div></section>
 
