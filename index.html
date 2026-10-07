@@ -214,46 +214,111 @@ const descriptions={
  ER:'Ligação expressa da Via Direta para a Reitoria. Tempo de passagem e chegada é estimado.',
  ECT:'Ligação expressa da Via Direta para C&T / ECT. Tempo de passagem e chegada é estimado.'
 };
-function lineCode(l){return l==='ECT'?'EC&T':l}
+function lineCode(l){return l==='ECT'?'C&T':l}
 function m(t){const[a,b]=t.split(':').map(Number);return a*60+b}
 function now(){const d=new Date();return d.getHours()*60+d.getMinutes()}
 function hhmm(v){v=(v+1440)%1440;return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
+function dayType(){const d=new Date().getDay();return d===6?'saturday':d===0?'sunday':'weekday'}
+function dayLabel(t){return t==='weekday'?'Dias úteis':t==='saturday'?'Sábado':'Domingo'}
 function next(arr,off=0){const n=now();for(const t of arr){const v=m(t)+off;if(v>=n)return v}return null}
-function candidates(o,d){const n=now(),out=[];Object.values(routes).forEach(r=>{const a=r.stops.findIndex(s=>s[0]===o),b=r.stops.findIndex(s=>s[0]===d);if(a<0||b<=a)return;const arr=(schedule[r.terminal]||{})[r.line]||[];const pass=next(arr,r.stops[a][2]);if(pass===null)return;out.push({r,line:r.line,pass,wait:pass-n,arrival:pass+(r.stops[b][2]-r.stops[a][2]),a,b})});return out.sort((x,y)=>x.arrival-y.arrival)}
-function waitLabel(v){if(v>90)return 'próxima às '+hhmm(now()+v);if(v<=1)return 'agora';return 'em '+v+' min'}
-function selectedStops(x){return x.r.stops.slice(x.a,x.b+1)}
-const origin=document.getElementById('origin'),dest=document.getElementById('dest');
-Object.entries(stopNames).sort((a,b)=>a[1].localeCompare(b[1],'pt-BR')).forEach(([id,n])=>{origin.add(new Option(n,id));dest.add(new Option(n,id))});origin.value='vd';dest.value='reitoria';
-let currentCandidate=null;
-function renderBest(){
- const o=origin.value,d=dest.value,list=candidates(o,d),box=document.getElementById('bestCard'),route=document.getElementById('routeCard');
- if(o===d){box.innerHTML='<div class="best-top"><div><div class="result-kicker">Escolha dois locais diferentes</div></div></div>';route.innerHTML='';currentCandidate=null;return}
- if(!list.length){box.innerHTML='<div class="best-top"><div><div class="result-kicker">Sem rota modelada</div><h3 class="result-title">Ainda não temos uma opção confiável para esse trajeto.</h3></div></div>';route.innerHTML='';currentCandidate=null;return}
- const b=list[0],c=colors[b.line],alts=list.slice(1);
- currentCandidate=b;
- box.innerHTML=`<div class="best-top"><div><div class="result-kicker">Melhor opção estimada</div><div class="line-row"><div class="line-chip ${b.line==='D'?'d':''}" style="--c:${c};background:${c}">${lineCode(b.line)}</div><div><h3 class="result-title">${names[b.line]}</h3><div class="route-name">${stopNames[o]} → ${stopNames[d]}</div></div></div></div><div class="eta"><strong>${waitLabel(b.wait)}</strong><span>passagem estimada</span></div></div><div class="action-row">${alts.length?'<button class="secondary" id="toggleAlt">Ver outras opções</button>':''}<a class="secondary" href="#horarios" style="text-decoration:none">Ver todos os horários</a></div><div class="alternatives" id="alternatives">${alts.map((x,i)=>`<button type="button" class="alt-item" data-alt-index="${i}"><div class="alt-badge ${x.line==='D'?'d':''}" style="--c:${colors[x.line]};background:${colors[x.line]}">${lineCode(x.line)}</div><div><b>${names[x.line]}</b><small>${stopNames[o]} → ${stopNames[d]} · toque para ver o trajeto</small></div><div class="alt-time">${waitLabel(x.wait)}<small>chegada ~ ${hhmm(x.arrival)}</small></div></button>`).join('')||'<div class="alt-item"><div><b>Nenhuma outra linha atende esse trajeto agora.</b></div></div>'}</div>`;
- if(alts.length){
-   const altBox=document.getElementById('alternatives'),btn=document.getElementById('toggleAlt');
-   btn.onclick=()=>{altBox.classList.toggle('show');btn.textContent=altBox.classList.contains('show')?'Ocultar outras opções':'Ver outras opções'};
-   altBox.querySelectorAll('[data-alt-index]').forEach(el=>el.onclick=()=>{
-      altBox.querySelectorAll('.alt-item').forEach(a=>a.classList.remove('selected'));
-      el.classList.add('selected');
-      currentCandidate=alts[Number(el.dataset.altIndex)];
-      renderRoute(currentCandidate);
-      document.querySelector('.route-section').scrollIntoView({behavior:'smooth',block:'start'});
-   });
- }
- renderRoute(b)
+function waitLabel(v){if(v<=1)return 'agora';if(v<60)return 'em '+v+' min';return 'às '+hhmm(now()+v)}
+function findSegment(stops,o,d){for(let a=0;a<stops.length;a++){if(stops[a][0]!==o)continue;for(let b=a+1;b<stops.length;b++){if(stops[b][0]===d)return{a,b}}}return null}
+function candidates(o,d){
+ const service=dayType();if(service==='sunday')return[];
+ const n=now(),out=[];
+ Object.values(routes).forEach(r=>{
+  if(r.day!==service)return;
+  const seg=findSegment(r.stops,o,d);if(!seg)return;
+  const arr=(schedule[r.terminal]||{})[r.line]||[];if(!arr.length)return;
+  const pass=next(arr,r.stops[seg.a][2]);if(pass===null)return;
+  out.push({r,line:r.line,pass,wait:pass-n,arrival:pass+(r.stops[seg.b][2]-r.stops[seg.a][2]),a:seg.a,b:seg.b});
+ });
+ const seen=new Set();
+ return out.sort((x,y)=>x.arrival-y.arrival||x.wait-y.wait).filter(x=>{const k=x.line+'|'+x.pass+'|'+x.arrival;if(seen.has(k))return false;seen.add(k);return true});
 }
-function renderRoute(b){const stops=selectedStops(b),c=colors[b.line];document.getElementById('routeCard').innerHTML=`<div class="route-summary"><div class="line-chip ${b.line==='D'?'d':''}" style="--c:${c};background:${c};width:32px;height:32px">${lineCode(b.line)}</div><div><b>${names[b.line]}</b><span>${stops.length===2?' · direto, sem paradas intermediárias':''}</span></div></div><div class="timeline" style="--c:${c}">${stops.map((s,i)=>`<div class="stop ${(i===0||i===stops.length-1)?'major':''}"><span class="node"></span><div><b>${stopNames[s[0]]||s[1]}</b><small>${i===0?'embarque':i===stops.length-1?'desembarque':'parada intermediária'}</small></div><time>${i===0?hhmm(b.pass):i===stops.length-1?'~ '+hhmm(b.arrival):'~ '+hhmm(b.pass+(s[2]-stops[0][2]))}</time></div>`).join('')}</div>`}
-function renderDepartures(){const rows=[];['D','I','ER','ECT'].forEach(l=>{const v=next(schedule.vd[l]||[]);if(v!==null)rows.push({l,v})});rows.sort((a,b)=>a.v-b.v);document.getElementById('departures').innerHTML=rows.map(x=>`<div class="departure card ${x.l==='D'?'d':''}" style="--c:${colors[x.l]}"><div class="code">${lineCode(x.l)}</div><time>${hhmm(x.v)}</time><span>${names[x.l]}</span></div>`).join('')||'<div class="departure card"><span>Sem novas saídas cadastradas hoje.</span></div>'}
-function renderLineCards(){document.getElementById('lineCards').innerHTML=['D','I','ER','ECT'].map(l=>`<article class="line-card card ${l==='D'?'d':''}" style="--c:${colors[l]}"><div class="line-code">${lineCode(l)}</div><h3>${names[l]}</h3><p>${descriptions[l]}</p><div class="line-note">${l==='ER'?'Via Direta ↔ Reitoria':l==='ECT'?'Via Direta ↔ EC&T':'Dois sentidos entre Via Direta e Terminal RU'}</div></article>`).join('')}
-let activeLine='D',activeTerminal='vd';
-function renderScheduleTabs(){const tabs=document.getElementById('scheduleTabs');tabs.innerHTML='';['D','I','ER','ECT'].forEach(l=>{const b=document.createElement('button');b.textContent=lineCode(l)+' · '+names[l];b.style.setProperty('--c',colors[l]);b.className=l===activeLine?'active':'';b.onclick=()=>{activeLine=l;activeTerminal='vd';renderScheduleTabs();renderTerminalTabs();renderTimes()};tabs.appendChild(b)})}
-function renderTerminalTabs(){const box=document.getElementById('terminalTabs');box.innerHTML='';const terms=(activeLine==='D'||activeLine==='I')?['vd','ru']:['vd'];terms.forEach(t=>{const b=document.createElement('button');b.textContent=t==='vd'?'Saída Via Direta':'Saída Terminal RU';b.className=t===activeTerminal?'active':'';b.onclick=()=>{activeTerminal=t;renderTerminalTabs();renderTimes()};box.appendChild(b)})}
-function renderTimes(){const arr=((schedule[activeTerminal]||{})[activeLine]||[]),n=now(),nextIndex=arr.findIndex(t=>m(t)>=n);document.getElementById('timesGrid').innerHTML=arr.map((t,i)=>`<div class="time ${i===nextIndex?'next':''}">${t}</div>`).join('')||'<div class="time">Sem horários cadastrados.</div>'}
-document.getElementById('findBtn').onclick=renderBest;origin.onchange=renderBest;dest.onchange=renderBest;document.getElementById('swapBtn').onclick=()=>{const a=origin.value;origin.value=dest.value;dest.value=a;renderBest()};
-renderBest();renderDepartures();renderLineCards();renderScheduleTabs();renderTerminalTabs();renderTimes();setInterval(renderDepartures,60000);
+function selectedStops(x){return x.r.stops.slice(x.a,x.b+1)}
+
+const origin=document.getElementById('origin'),dest=document.getElementById('dest');
+Object.entries(stopNames).sort((a,b)=>a[1].localeCompare(b[1],'pt-BR')).forEach(([id,n])=>{origin.add(new Option(n,id));dest.add(new Option(n,id))});
+const savedOrigin=localStorage.getItem('vdc-origin'),savedDest=localStorage.getItem('vdc-dest');
+origin.value=savedOrigin&&stopNames[savedOrigin]?savedOrigin:'via';
+dest.value=savedDest&&stopNames[savedDest]?savedDest:'rei';
+let currentCandidate=null;
+
+function renderServiceBadge(){
+ const badge=document.getElementById('serviceBadge');if(!badge)return;
+ const service=dayType();
+ const weekday=new Intl.DateTimeFormat('pt-BR',{weekday:'long'}).format(new Date()).replace('-feira','');
+ badge.textContent=service==='weekday'?dayLabel(service)+' · '+weekday:dayLabel(service);
+}
+function renderBest(){
+ const o=origin.value,d=dest.value,box=document.getElementById('bestCard'),route=document.getElementById('routeCard');
+ localStorage.setItem('vdc-origin',o);localStorage.setItem('vdc-dest',d);
+ if(o===d){box.innerHTML='<div class="best-top"><div><div class="result-kicker">Escolha dois locais diferentes</div><h3 class="result-title">Origem e destino estão iguais.</h3></div></div>';route.innerHTML='';currentCandidate=null;return}
+ if(dayType()==='sunday'){box.innerHTML='<div class="best-top"><div><div class="result-kicker">Domingo</div><h3 class="result-title">Não há programação de domingo cadastrada.</h3><div class="route-name">Consulte abaixo os horários de dias úteis e sábado.</div></div></div>';route.innerHTML='';currentCandidate=null;return}
+ const list=candidates(o,d);
+ if(!list.length){box.innerHTML='<div class="best-top"><div><div class="result-kicker">Sem opção restante agora</div><h3 class="result-title">Não encontrei uma viagem programada para esse trajeto neste momento.</h3><div class="route-name">Pode ser fim da operação do dia ou um trecho ainda não modelado.</div></div></div>';route.innerHTML='';currentCandidate=null;return}
+ const b=list[0],color=colors[b.line],alts=list.slice(1);currentCandidate=b;
+ let altHtml='';
+ alts.forEach((x,i)=>{
+  altHtml+='<button type="button" class="alt-item" data-alt-index="'+i+'"><div class="alt-badge '+((x.line==='D'||x.line==='S')?'d':'')+'" style="--c:'+colors[x.line]+';background:'+colors[x.line]+'">'+lineCode(x.line)+'</div><div><b>'+names[x.line]+'</b><small>passagem ~ '+hhmm(x.pass)+' · toque para ver o trajeto</small></div><div class="alt-time">'+waitLabel(x.wait)+'<small>chegada ~ '+hhmm(x.arrival)+'</small></div></button>';
+ });
+ box.innerHTML='<div class="best-top"><div><div class="result-kicker">Melhor opção estimada</div><div class="line-row"><div class="line-chip '+((b.line==='D'||b.line==='S')?'d':'')+'" style="--c:'+color+';background:'+color+'">'+lineCode(b.line)+'</div><div><h3 class="result-title">'+names[b.line]+'</h3><div class="route-name">'+stopNames[o]+' → '+stopNames[d]+'</div></div></div></div><div class="eta"><strong>'+waitLabel(b.wait)+'</strong><span>passagem ~ '+hhmm(b.pass)+' · chegada ~ '+hhmm(b.arrival)+'</span></div></div><div class="action-row">'+(alts.length?'<button class="secondary" id="toggleAlt" type="button">Outras opções</button>':'')+'<a class="secondary" href="#horarios" style="text-decoration:none">Ver horários</a></div><div class="alternatives" id="alternatives">'+altHtml+'</div>';
+ if(alts.length){
+  const altBox=document.getElementById('alternatives'),btn=document.getElementById('toggleAlt');
+  btn.onclick=()=>{altBox.classList.toggle('show');btn.textContent=altBox.classList.contains('show')?'Ocultar opções':'Outras opções'};
+  altBox.querySelectorAll('[data-alt-index]').forEach(el=>el.onclick=()=>{altBox.querySelectorAll('.alt-item').forEach(a=>a.classList.remove('selected'));el.classList.add('selected');currentCandidate=alts[Number(el.dataset.altIndex)];renderRoute(currentCandidate);document.querySelector('.route-section').scrollIntoView({behavior:'smooth',block:'start'})});
+ }
+ renderRoute(b);
+}
+function renderRoute(b){
+ const stops=selectedStops(b),color=colors[b.line],base=stops[0][2];
+ let timeline='';
+ stops.forEach((s,i)=>{const label=i===0?'embarque':i===stops.length-1?'desembarque':'parada intermediária';const time=i===0?hhmm(b.pass):'~ '+hhmm(b.pass+(s[2]-base));timeline+='<div class="stop '+((i===0||i===stops.length-1)?'major':'')+'"><span class="node"></span><div><b>'+stopNames[s[0]]+'</b><small>'+label+'</small></div><time>'+time+'</time></div>'});
+ const middle=stops.length-2;
+ document.getElementById('routeCard').innerHTML='<div class="route-summary"><div class="line-chip '+((b.line==='D'||b.line==='S')?'d':'')+'" style="--c:'+color+';background:'+color+';width:34px;height:34px">'+lineCode(b.line)+'</div><div><b>'+names[b.line]+'</b><span> · '+(middle>0?middle+' parada'+(middle>1?'s':'')+' no caminho':'direto')+'</span></div></div><div class="timeline" style="--c:'+color+'">'+timeline+'</div>';
+}
+function renderDepartures(){
+ const service=dayType(),box=document.getElementById('departures'),context=document.getElementById('departureContext');
+ if(service==='sunday'){box.innerHTML='<div class="departure card departure-empty"><span>Não há programação de domingo cadastrada.</span></div>';if(context)context.textContent='Sem programação cadastrada para domingo.';return}
+ const terminal=service==='weekday'?'vd':'ru',lines=service==='weekday'?['D','I','ER','ECT']:['S'],rows=[];
+ lines.forEach(l=>{const v=next((schedule[terminal]||{})[l]||[]);if(v!==null)rows.push({l,v})});rows.sort((a,b)=>a.v-b.v);
+ if(context)context.textContent=service==='weekday'?'Próximas saídas programadas da Via Direta.':'Próximas saídas programadas do Terminal RU.';
+ let html='';rows.forEach(x=>{html+='<div class="departure card '+((x.l==='D'||x.l==='S')?'d':'')+'" style="--c:'+colors[x.l]+'"><div class="code">'+lineCode(x.l)+'</div><time>'+hhmm(x.v)+'</time><span>'+names[x.l]+'</span><small>'+(terminal==='vd'?'Via Direta':'Terminal RU')+'</small></div>'});
+ box.innerHTML=html||'<div class="departure card departure-empty"><span>Sem novas saídas programadas hoje.</span></div>';
+}
+function renderLineCards(){
+ let html='';['D','I','ER','ECT'].forEach(l=>{const note=l==='ER'?'Via Direta → Reitoria':l==='ECT'?'Via Direta → C&T / ECT':'Percurso circular pelo Campus Central';html+='<article class="line-card card '+(l==='D'?'d':'')+'" style="--c:'+colors[l]+'"><div class="line-code">'+lineCode(l)+'</div><h3>'+names[l]+'</h3><p>'+descriptions[l]+'</p><div class="line-note">'+note+'</div></article>'});document.getElementById('lineCards').innerHTML=html;
+}
+
+let activeScheduleDay='weekday',activeLine='D',activeTerminal='vd';
+function renderDayTabs(){
+ const box=document.getElementById('dayTabs');if(!box)return;box.innerHTML='';
+ [['weekday','Dias úteis'],['saturday','Sábado']].forEach(([id,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.className=id===activeScheduleDay?'active':'';b.onclick=()=>{activeScheduleDay=id;activeLine=id==='weekday'?'D':'S';activeTerminal=id==='weekday'?'vd':'ru';renderDayTabs();renderScheduleTabs();renderTerminalTabs();renderTimes()};box.appendChild(b)});
+}
+function renderScheduleTabs(){
+ const tabs=document.getElementById('scheduleTabs');tabs.innerHTML='';
+ const lines=activeScheduleDay==='weekday'?['D','I','ER','ECT']:['S'];
+ lines.forEach(l=>{const b=document.createElement('button');b.type='button';b.textContent=lineCode(l)+' · '+names[l];b.style.setProperty('--c',colors[l]);b.className=l===activeLine?'active':'';b.onclick=()=>{activeLine=l;activeTerminal=activeScheduleDay==='weekday'?'vd':'ru';renderScheduleTabs();renderTerminalTabs();renderTimes()};tabs.appendChild(b)});
+}
+function renderTerminalTabs(){
+ const box=document.getElementById('terminalTabs');box.innerHTML='';let terms=['ru'];
+ if(activeScheduleDay==='weekday')terms=(activeLine==='D'||activeLine==='I')?['vd','ru']:['vd'];
+ terms.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t==='vd'?'Saída Via Direta':'Saída Terminal RU';b.className=t===activeTerminal?'active':'';b.onclick=()=>{activeTerminal=t;renderTerminalTabs();renderTimes()};box.appendChild(b)});
+}
+function renderTimes(){
+ const arr=(schedule[activeTerminal]||{})[activeLine]||[],n=now();
+ const sameDay=dayType()===activeScheduleDay,nextIndex=sameDay?arr.findIndex(t=>m(t)>=n):-1;
+ document.getElementById('timesGrid').innerHTML=arr.map((t,i)=>'<div class="time '+(i===nextIndex?'next':'')+'">'+t+'</div>').join('')||'<div class="time time-empty">Sem horários cadastrados.</div>';
+ const status=document.getElementById('scheduleStatus');if(status)status.textContent=activeScheduleDay==='weekday'?'Circular conferido no Terminal RU · out/2026':'Sábado · horário de referência';
+}
+function refreshAll(){renderServiceBadge();renderBest();renderDepartures();renderTimes()}
+
+document.getElementById('findBtn').onclick=renderBest;
+origin.onchange=renderBest;dest.onchange=renderBest;
+document.getElementById('swapBtn').onclick=()=>{const a=origin.value;origin.value=dest.value;dest.value=a;renderBest()};
+renderServiceBadge();renderLineCards();renderDayTabs();renderScheduleTabs();renderTerminalTabs();renderTimes();renderBest();renderDepartures();
+setInterval(refreshAll,60000);
 const toTop=document.getElementById('toTop');window.addEventListener('scroll',()=>toTop.classList.toggle('show',window.scrollY>420),{passive:true});toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 </script>
 
