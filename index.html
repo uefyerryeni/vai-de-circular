@@ -181,9 +181,8 @@ body.dark .day-tabs button.active{background:#f0f2f3;color:#17191c;border-color:
 .line-key span{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:650;color:#46505a}
 .line-key i{width:10px;height:10px;border-radius:3px;background:var(--c);display:inline-block}
 body.dark .line-key span{color:#c5ccd1}
-.initiative{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:inherit;text-decoration:none}
-.initiative::before{content:"84";display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#17191c;color:#f4dd19;font-size:10px;font-weight:800}
-body.dark .initiative::before{background:#f4dd19;color:#17191c}
+.initiative{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:inherit;text-decoration:none}
+.initiative-logo{width:28px;height:28px;object-fit:contain;display:block;flex:0 0 28px}
 
 </style>
 </head>
@@ -203,7 +202,7 @@ body.dark .initiative::before{background:#f4dd19;color:#17191c}
 
 <section class="section" id="horarios"><div class="wrap"><div class="section-head"><div><h2>Todos os horários</h2></div><p>Para consultar agora ou se programar depois.</p></div><div class="schedule card"><div class="schedule-intro"><div><h3>Horários de referência</h3><span>Selecione uma linha e o terminal de saída.</span></div><span id="scheduleStatus">Circular conferido no Terminal RU · out/2026</span></div><div class="day-tabs" id="dayTabs"></div><div class="schedule-tabs" id="scheduleTabs"></div><div class="schedule-toolbar" id="terminalTabs"></div><div class="times-grid" id="timesGrid"></div><div class="schedule-foot">Nos dias úteis, os horários do Circular Direto e Inverso foram conferidos nas tabelas afixadas no Terminal RU em outubro de 2026. Expresso e sábado permanecem como horários de referência. Horários fora dos terminais são estimativas e podem variar com a operação e o trânsito.</div></div></div></section>
 
-<section class="about" id="sobre"><div class="wrap"><div class="about-line"><div><strong>Vai de Circular</strong><br><a class="initiative" href="https://uefyerryeni.github.io/" target="_blank" rel="noopener">Uma iniciativa Uefyerryeni</a></div><span>Projeto independente para consulta do Circular da UFRN. Sem coleta de localização e sem rastreamento em tempo real.</span></div></div></section>
+<section class="about" id="sobre"><div class="wrap"><div class="about-line"><div><strong>Vai de Circular</strong><br><a class="initiative" href="https://uefyerryeni.github.io/" target="_blank" rel="noopener"><img class="initiative-logo" src="assets/uefyerryeni-u.png" alt="" aria-hidden="true"><span>Uma iniciativa Uefyerryeni</span></a></div><span>Projeto independente para consulta do Circular da UFRN. Sem coleta de localização e sem rastreamento em tempo real.</span></div></div></section>
 </main>
 <button class="to-top" id="toTop" type="button" aria-label="Voltar ao início">↑</button>
 <script>
