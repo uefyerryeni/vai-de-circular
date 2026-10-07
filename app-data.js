@@ -5,7 +5,7 @@ const I='06:30 06:50 07:10 07:30 07:50 08:10 08:40 09:10 09:40 10:10 10:40 11:00
 const ECT='06:35 06:45 06:55 07:05 07:15 07:25 07:45 08:05 08:15 08:25 08:35 08:45 08:55 09:05 09:25 09:45 10:05 10:15 10:35 10:55 11:15 11:25 11:45 11:55 12:05 12:15 12:25 12:35 12:45 12:55 13:05 13:15 13:25 13:45 14:05 14:25 14:35 14:45 15:05 15:25 15:35 15:45 16:05 16:25 16:45 16:55 17:05 17:15 17:25 17:35 17:45 17:55 18:05 18:15 18:25 18:35 18:45 18:55 19:05 19:25 19:35 19:55 20:15 20:35 20:45 20:55 21:05 21:15 21:25 21:35 21:45 21:55 22:05 22:15 22:25'.split(' ');
 const ER='06:30 06:40 06:50 07:00 07:10 07:20 07:30 07:40 07:50 08:00 08:10 08:20 08:30 08:40 08:50 09:00 09:20 09:40 10:00 10:20 10:40 11:00 11:20 11:40 11:55 12:00 12:10 12:20 12:30 12:40 12:50 13:00 13:10 13:20 13:30 13:40 13:50 14:00 14:20 14:40 15:00 15:10 15:20 15:30 15:50 16:10 16:30 16:40 16:50 17:00 17:10 17:20 17:30 17:40 17:50 18:00 18:10 18:20 18:30 18:40 18:50 19:00 19:20 19:30 19:40 20:00 20:10 20:20 20:30 20:40'.split(' ');
 const S='06:15 06:45 07:15 07:45 08:15 08:45 09:15 09:45 10:15 11:45 12:15 12:45 13:15 13:45 14:15'.split(' ');
-const schedule={vd:{D:['06:15',...D.slice(0,-1).map(t=>add(t,15))],I:['06:30',...I.slice(0,-1).map(t=>add(t,10))],ECT,ER},ru:{D,I,S}};
+const schedule={vd:{D:['06:15',...D.slice(0,-1).map(t=>add(t,15))],I:['06:30',...I.slice(0,-1).map(t=>add(t,10))],ECT,ER},ru:{D,I,S},rei:{ER:ER.map(t=>add(t,15))},cet:{ECT:ECT.map(t=>add(t,15))}};
 const stops={via:'Via Direta',ru:'Terminal RU',rei:'Reitoria',cet:'C&T / ECT',imd:'IMD / Residência',ccsa:'CCSA · Setores I e V',cchla:'CCHLA / CE · Setor II',cb:'Centro de Biociências / Morfologia',fisio:'Fisio / Piscina',geo:'Geologia',petr:'Laboratório de Petróleo',nu:'NUPLAM',edit:'Editora Universitária',poti:'Potilândia',gin:'Ginásio Mirassol',igre:'Igreja Mirassol',deart:'Departamento de Artes',mus:'Escola de Música',def:'Educação Física (DEF)',por:'Portão 2'};
 const aliases={gin:['Ginásio Mirassol','Floriano Cavalcanti','Colégio Floca'],igre:['Igreja Mirassol','Santo Afonso']};
 const routes={
@@ -13,7 +13,7 @@ Dru:{line:'D',terminal:'ru',day:'weekday',stops:[['ru',0],['fisio',1],['ccsa',2]
 Dvd:{line:'D',terminal:'vd',day:'weekday',stops:[['via',0],['deart',2],['mus',4],['rei',6],['def',8],['ru',15]]},
 Iru:{line:'I',terminal:'ru',day:'weekday',stops:[['ru',0],['def',1],['rei',2],['edit',4],['por',5],['gin',6],['igre',7],['via',10],['deart',13],['mus',15],['cb',16],['cet',18],['petr',19],['geo',20],['cchla',21],['ccsa',22],['fisio',23],['poti',25],['imd',27],['ru',30]]},
 Ivd:{line:'I',terminal:'vd',day:'weekday',stops:[['via',0],['deart',3],['mus',5],['cb',6],['cet',8],['petr',9],['geo',10],['cchla',11],['ccsa',12],['fisio',13],['poti',15],['imd',17],['ru',20]]},
-ER:{line:'ER',terminal:'vd',day:'weekday',stops:[['via',0],['rei',5]]},ECT:{line:'ECT',terminal:'vd',day:'weekday',stops:[['via',0],['cet',5]]},
+ERvd:{line:'ER',terminal:'vd',day:'weekday',originScheduled:true,stops:[['via',0],['rei',15]]},ERrei:{line:'ER',terminal:'rei',day:'weekday',originScheduled:false,stops:[['rei',0],['via',15]]},ECTvd:{line:'ECT',terminal:'vd',day:'weekday',originScheduled:true,stops:[['via',0],['cet',15]]},ECTcet:{line:'ECT',terminal:'cet',day:'weekday',originScheduled:false,stops:[['cet',0],['via',15]]},
 S:{line:'S',terminal:'ru',day:'saturday',stops:[['ru',0],['fisio',1],['ccsa',2],['cchla',3],['geo',4],['petr',5],['cet',5],['cb',6],['nu',6],['edit',7],['por',8],['gin',8],['igre',9],['via',12],['deart',16],['mus',17],['rei',18],['def',19],['ru',25]]}};
 return{schedule,stops,aliases,routes};
 })();
