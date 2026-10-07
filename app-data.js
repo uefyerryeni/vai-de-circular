@@ -7,7 +7,7 @@ const ER='06:30 06:40 06:50 07:00 07:10 07:20 07:30 07:40 07:50 08:00 08:10 08:2
 const S='06:15 06:45 07:15 07:45 08:15 08:45 09:15 09:45 10:15 11:45 12:15 12:45 13:15 13:45 14:15'.split(' ');
 const schedule={vd:{D:['06:15',...D.slice(0,-1).map(t=>add(t,15))],I:['06:30',...I.slice(0,-1).map(t=>add(t,10))],ECT,ER},ru:{D,I,S}};
 const stops={via:'Via Direta',ru:'Terminal RU',rei:'Reitoria',cet:'C&T / ECT',imd:'IMD / Residência',ccsa:'CCSA · Setores I e V',cchla:'CCHLA / CE · Setor II',cb:'Centro de Biociências / Morfologia',fisio:'Fisio / Piscina',geo:'Geologia',petr:'Laboratório de Petróleo',nu:'NUPLAM',edit:'Editora Universitária',poti:'Potilândia',gin:'Ginásio Mirassol',igre:'Igreja Mirassol',deart:'Departamento de Artes',mus:'Escola de Música',def:'Educação Física (DEF)',por:'Portão 2'};
-const aliases={gin:['Ginásio Mirassol','Floriano Cavalcanti','Colégio Flock'],igre:['Igreja Mirassol','Santo Afonso']};
+const aliases={gin:['Ginásio Mirassol','Floriano Cavalcanti','Colégio Floca'],igre:['Igreja Mirassol','Santo Afonso']};
 const routes={
 Dru:{line:'D',terminal:'ru',day:'weekday',stops:[['ru',0],['fisio',1],['ccsa',2],['cchla',3],['geo',4],['petr',5],['cet',6],['cb',8],['nu',9],['edit',10],['por',11],['gin',12],['igre',13],['via',15],['deart',17],['mus',19],['rei',21],['def',23],['ru',30]]},
 Dvd:{line:'D',terminal:'vd',day:'weekday',stops:[['via',0],['deart',2],['mus',4],['rei',6],['def',8],['ru',15]]},
