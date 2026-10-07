@@ -207,3 +207,15 @@ body.dark .swap-icon{
 @media(max-width:460px){
   .wrap{width:calc(100% - 16px)}
 }
+
+/* indicação de horários aproximados v22 */
+.estimate-note{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid var(--rule);
+  color:var(--muted);
+  font-size:10.5px;
+  line-height:1.45;
+}
+.estimate-note strong{color:inherit}
+body.dark .estimate-note{color:#aeb7be}
