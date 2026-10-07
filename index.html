@@ -221,7 +221,8 @@ function now(){const d=new Date();return d.getHours()*60+d.getMinutes()}
 function hhmm(v){v=(v+1440)%1440;return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0')}
 function dayType(){const d=new Date().getDay();return d===6?'saturday':d===0?'sunday':'weekday'}
 function dayLabel(t){return t==='weekday'?'Dias úteis':t==='saturday'?'Sábado':'Domingo'}
-function next(arr,off=0){const n=now();for(const t of arr){const v=m(t)+off;if(v>=n)return v}return null}\nfunction nextTrip(arr,off=0){const n=now();for(let i=0;i<arr.length;i++){const base=m(arr[i]),pass=base+off;if(pass>=n)return{base,pass,index:i}}return null}
+function next(arr,off=0){const n=now();for(const t of arr){const v=m(t)+off;if(v>=n)return v}return null}
+function nextTrip(arr,off=0){const n=now();for(let i=0;i<arr.length;i++){const base=m(arr[i]),pass=base+off;if(pass>=n)return{base,pass,index:i}}return null}
 function waitLabel(v){if(v<=1)return 'agora';if(v<60)return 'em '+v+' min';return 'às '+hhmm(now()+v)}
 function findSegment(stops,o,d){for(let a=0;a<stops.length;a++){if(stops[a][0]!==o)continue;for(let b=a+1;b<stops.length;b++){if(stops[b][0]===d)return{a,b}}}return null}
 function candidates(o,d){
