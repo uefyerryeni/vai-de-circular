@@ -219,3 +219,14 @@ body.dark .swap-icon{
 }
 .estimate-note strong{color:inherit}
 body.dark .estimate-note{color:#aeb7be}
+
+/* Alerta de serviço aos sábados (não confirmado) */
+.service-alert{display:flex;align-items:flex-start;gap:12px;margin:12px 0 16px;padding:15px 17px;background:#fff2c7;color:#3c2a00;border:2px solid #9a6900;border-left-width:6px;border-radius:12px;box-shadow:0 5px 15px rgba(75,56,0,.08)}
+.service-alert[hidden],#saturdayNotice[hidden],#scheduleSaturdayNotice[hidden]{display:none!important}
+.service-alert .alert-icon{flex:0 0 26px;height:26px;display:grid;place-items:center;background:#463100;color:#fff;border-radius:50%;font-size:17px;font-weight:900}
+.service-alert strong{display:block;font-size:15px;font-weight:850;line-height:1.3}
+.service-alert p{margin:5px 0 0!important;color:inherit!important;font-size:13px!important;line-height:1.55!important}
+#scheduleSaturdayNotice{margin:12px 16px}
+body.dark .service-alert{background:#3b2e0d;border-color:#dfb85c;color:#fff3ce;box-shadow:none}
+body.dark .service-alert .alert-icon{background:#f4dd19;color:#262000}
+@media(max-width:460px){.service-alert{padding:13px 12px;gap:10px}.service-alert strong{font-size:14px}.service-alert p{font-size:12.5px!important}#scheduleSaturdayNotice{margin:10px 12px}}
