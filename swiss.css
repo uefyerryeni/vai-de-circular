@@ -237,3 +237,44 @@ body.dark .go,body.dark .vdc-action,body.dark .vdc-future-go,body.dark .to-top{c
 }
 @media(max-width:360px){.nav a{font-size:10.5px;padding-inline:3px}.brandtext span{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+
+/* Consulta de outro dia — extensão visual Swiss Transit */
+.vdc-next-day{max-width:100%}
+.vdc-next-day .vdc-future-sub{margin:5px 0 20px}
+.vdc-next-day .vdc-future-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.vdc-next-day .vdc-future-field{font-size:11.5px;letter-spacing:.01em}
+.vdc-next-day .vdc-future-field select,.vdc-next-day .vdc-future-field input{font-size:15px;font-weight:700;min-height:49px;padding:11px 12px}
+.vdc-next-day .vdc-future-go{min-height:52px;font-size:15px}
+.vdc-plan-hint{margin:10px 0 0;color:var(--muted);font-size:11.5px}
+.vdc-next-day .vdc-future-result{border-top:1px solid var(--rule);margin-top:20px;padding-top:18px}
+.vdc-plan-result-heading{display:flex;align-items:start;justify-content:space-between;gap:8px 18px;flex-wrap:wrap;margin-bottom:14px}
+.vdc-plan-result-heading strong{font-size:17px;letter-spacing:-.02em}
+.vdc-plan-result-heading span{font-size:12px;color:var(--muted)}
+.vdc-plan-disclaimer{color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 13px}
+.vdc-plan-trip{background:var(--raised);border:1px solid var(--rule);border-radius:10px;padding:14px;margin:9px 0}
+.vdc-plan-featured{background:var(--surface);border-left:5px solid var(--yellow);padding:18px}
+.vdc-plan-trip-top{display:flex;align-items:center;gap:11px}
+.vdc-plan-line-name strong{display:block;font-size:14px}
+.vdc-plan-line-name small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.vdc-plan-times{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:16px;align-items:center;margin:15px 0 10px}
+.vdc-plan-times div{display:grid;gap:4px;min-width:0}
+.vdc-plan-times small{font-size:11px;color:var(--muted)}
+.vdc-plan-times strong{font-size:clamp(24px,3.4vw,33px);letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:1.1}
+.vdc-plan-arrow{font-weight:850;font-size:24px;color:var(--muted)}
+.vdc-plan-route{border-top:1px solid var(--rule);padding-top:10px;margin-top:13px}
+.vdc-plan-route summary,.vdc-plan-more summary{color:var(--text);font-size:12px;font-weight:800;cursor:pointer;list-style-position:inside;min-height:28px}
+.vdc-plan-route summary:focus-visible,.vdc-plan-more summary:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.vdc-plan-stops{padding-left:25px;font-size:12px;color:var(--muted);line-height:1.7;margin:10px 0 0}
+.vdc-plan-more{margin-top:15px}
+.vdc-plan-more>summary{background:var(--soft);border:1px solid var(--rule);border-radius:7px;padding:12px;font-size:13px;min-height:44px}
+.vdc-plan-more-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.vdc-plan-more-list .vdc-plan-trip{margin:0}
+.vdc-plan-more-list .vdc-plan-times{gap:8px}
+.vdc-plan-more-list .vdc-plan-times strong{font-size:23px}
+.vdc-plan-table-link{display:inline-flex;margin-top:12px;font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:720px){
+ .vdc-plan-more-list{grid-template-columns:1fr}
+ .vdc-next-day .vdc-future-form{grid-template-columns:1fr}
+ .vdc-plan-times{gap:8px}
+ .vdc-plan-result-heading{display:grid;gap:4px}
+}
