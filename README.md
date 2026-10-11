@@ -1,57 +1,39 @@
-# Vai de Circular
+# Vai de Circular — UEFY
+Ferramenta independente de consulta de horários e trajetos do Circular da UFRN. Sem instalação e sem localização de veículos em tempo real.
 
-Ferramenta independente da Uefyerryeni para consulta de rotas e horários de referência do Circular da UFRN, diretamente no navegador, sem necessidade de instalação.
+**Site:** https://uefyerryeni.github.io/vai-de-circular/
 
-**Acesso:** https://uefyerryeni.github.io/vai-de-circular/
+## Navegação
+- **Consultar:** origem e destino, melhor opção estimada, percurso e próximos horários na parada de origem
+- **Tabela:** horários de referência por linha e terminal, incluindo informação histórica de sábado
+- **Mais ferramentas:** uma página separada (`extras.html`) para planejamento em outra data, favoritos de paradas, consulta por parada e compartilhamento de trajetos
 
-## O que faz
-- Compara trajetos por origem e destino nos dias úteis.
-- Mostra horários de referência, passagens estimadas e linhas.
-- Oferece tema claro/escuro e consulta em celular ou computador.
+O conteúdo principal está em `index.html`. Os módulos complementares não são carregados ali.
 
-## Atenção aos horários
-- Não existe localização dos veículos nem confirmação de operação em tempo real.
-- Direto e Inverso: tabelas de dias úteis conferidas no Terminal RU em outubro de 2026; a prestação efetiva do serviço pode mudar.
-- Expressos: referências com trechos estimados em aproximadamente 15 minutos.
-- Sábados: dados históricos sem operação confirmada; a ferramenta **não recomenda próximas saídas** aos sábados.
-- Domingos: sem programação cadastrada. Isso não é confirmação oficial sobre existência ou ausência de serviço.
-- Feriados, alterações de rotina, atrasos, cancelamentos e suspensões podem tornar as estimativas inadequadas. Confirme a operação antes de se deslocar.
+## Identidade visual
+A versão 1.3 usa **Swiss Transit Design**: sistema tipográfico e sinalização de transporte, com cor UEFY `#f4dd19`, superfícies sólidas, cabeçalho levemente translúcido e contraste reforçado. O arquivo **`swiss.css`** é a única folha de estilos carregada nas duas páginas. Os CSS antigos estão mantidos no repositório somente para eventual recuperação, sem uso nas páginas atuais.
 
-## Privacidade e independência
-Não solicita geolocalização, login ou dados pessoais. Preferências de tema, origem e destino podem ser armazenadas apenas no navegador do usuário (localStorage). Não é uma plataforma oficial da UFRN.
+Modo claro e escuro usam a mesma identidade: controles amarelos sempre com texto escuro. As cores das linhas foram mantidas.
 
-## Atualização editorial
-Para corrigir horários ou itinerários, revise `app-data.js` indicando a origem e a data da conferência; teste cálculos do planejador antes de divulgar mudanças. Interfaces ficam em `index.html`, `styles.css` e `app.js`.
+## Dados, cálculo e confiabilidade
+- `app-data.js`: tabelas, linhas e paradas. Direto e Inverso conferidos em tabelas do Terminal RU em outubro de 2026. Expressos têm estimativas.
+- `vdc-core.js`: núcleo compartilhado de cálculos de horário por origem/destino, passagens por parada e identificação de feriados.
+- `app.js`: interação da consulta principal.
+- `vdc-modules.js`, `vdc-future.js`: ferramentas da segunda página.
+- **Feriados nacionais e datas especiais de Natal/RN**, sábados e domingos: não há recomendação automática de ônibus sem operação confirmada. O calendário não acompanha automaticamente suspensões, recessos da UFRN ou mudanças publicadas pela STTU.
+- **Horários de sábado são históricos**, sem confirmação de operação.
+- Não há GPS de veículos. As passagens intermediárias, durações, chegadas e retornos dos Expressos são aproximações. A confirmação em campo continua indispensável.
 
-## Checklist antes de divulgação ampla
-- [x] Identidade e avisos sobre estimativas
-- [x] Alerta e bloqueio de recomendação automática aos sábados
-- [x] Metadados de compartilhamento
-- [ ] Teste presencial de horários e percursos (especialmente Expressos e sábados)
-- [ ] Teste visual e funcional em dispositivos reais
-- [ ] Conferência de disponibilidade da página pública
+## Compartilhamento
+Os links gerados em Mais ferramentas abrem a consulta principal com os parâmetros `?origem=ID&destino=ID`, que têm prioridade sobre preferências locais quando válidos.
 
-**Status:** versão candidata a lançamento 1.0; a publicação ampla deve considerar as pendências acima.
+## Módulos opcionais
+Ative ou desative individualmente em `window.VDC_FEATURES` no fim de `extras.html`: `favorites`, `stopDepartures`, `sharing` e `futurePlanner`. O módulo redundante `serviceStatus` permanece desativado. Nenhum deles altera o planejador principal.
 
-## Módulos opcionais da versão 1.1
+## Privacidade
+Não exige conta, não solicita geolocalização e não monitora ônibus. Preferências de tema, origem, destino e favoritos são salvas localmente no navegador do usuário quando o armazenamento está disponível.
 
-Os módulos ficam isolados em `vdc-modules.js` e `vdc-modules.css`, sem alterar o planejador principal:
-- `favorites`: favoritos locais de paradas (máximo de cinco)
-- `stopDepartures`: passagens de referência por parada somente de segunda a sexta, nunca GPS ou confirmação de operação
-- `serviceStatus`: faixa explicativa sobre dias úteis, sábado e domingo
-- `sharing`: link de origem/destino com parâmetros `?origem=...&destino=...`
+## Validação e publicação
+Testes de sintaxe e lógica de feriados, trajetos e estrutura executados em 11/10/2026. Antes de uma divulgação com promessa de precisão, conferir horários de operação em campo e fazer teste manual de interface em celular e computador. Não confundir uma tabela de referência com confirmação da viagem.
 
-**Como reverter:** no fim de `index.html`, altere para `false` uma ou mais opções de `window.VDC_FEATURES`. Para remover completamente a expansão, exclua o `div#vdc-extras` e as referências aos dois arquivos `vdc-modules` no HTML. Os arquivos principais permanecem independentes. O compartilhamento exige que o módulo `sharing` esteja ligado no destino.
-
-Observação: os horários calculados para paradas intermediárias são aproximações derivadas dos deslocamentos cadastrados no projeto. Não devem ser interpretados como localização ao vivo ou garantia de embarque. 
-
-## Planejador de outra data (versão 1.2)
-Módulo isolado em `vdc-future.js` e `vdc-future.css`. O formulário usa como exemplo **13/10/2026, 07:30, Terminal RU → Reitoria**. A data e o horário podem ser alterados; o planejador original “Agora” continua independente.
-
-- Consulta as rotas e tabelas locais para dias úteis, sem afirmar operação efetiva.
-- Aos sábados, domingos e feriados nacionais (além de Carnaval e Corpus Christi como datas de cautela), apresenta aviso, sem recomendar ônibus.
-- Não há API externa nem rastreamento de veículos. Feriados locais, recessos acadêmicos e mudanças extraordinárias não são identificados automaticamente.
-- Para desativar **somente** esse módulo, altere `futurePlanner:true` para `futurePlanner:false` em `window.VDC_FEATURES` no `index.html`.
-- Para retirá-lo inteiramente, remova apenas `#vdc-future` e as referências a `vdc-future.js` e `vdc-future.css`.
-
-Observação: esta é uma estimativa pela tabela, não confirmação de circulação. Verificação em navegador e em campo ainda é necessária antes de tratar os resultados como validados.
+Projeto independente da UFRN e STTU.
