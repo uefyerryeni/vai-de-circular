@@ -32,3 +32,15 @@ Para corrigir horários ou itinerários, revise `app-data.js` indicando a origem
 - [ ] Conferência de disponibilidade da página pública
 
 **Status:** versão candidata a lançamento 1.0; a publicação ampla deve considerar as pendências acima.
+
+## Módulos opcionais da versão 1.1
+
+Os módulos ficam isolados em `vdc-modules.js` e `vdc-modules.css`, sem alterar o planejador principal:
+- `favorites`: favoritos locais de paradas (máximo de cinco)
+- `stopDepartures`: passagens de referência por parada somente de segunda a sexta, nunca GPS ou confirmação de operação
+- `serviceStatus`: faixa explicativa sobre dias úteis, sábado e domingo
+- `sharing`: link de origem/destino com parâmetros `?origem=...&destino=...`
+
+**Como reverter:** no fim de `index.html`, altere para `false` uma ou mais opções de `window.VDC_FEATURES`. Para remover completamente a expansão, exclua o `div#vdc-extras` e as referências aos dois arquivos `vdc-modules` no HTML. Os arquivos principais permanecem independentes. O compartilhamento exige que o módulo `sharing` esteja ligado no destino.
+
+Observação: os horários calculados para paradas intermediárias são aproximações derivadas dos deslocamentos cadastrados no projeto. Não devem ser interpretados como localização ao vivo ou garantia de embarque. 
