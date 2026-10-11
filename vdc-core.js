@@ -58,5 +58,25 @@ function departures(terminal='vd',iso=localISO(),from=now(),limit=4){
  }
  return result.sort((a,b)=>a.pass-b.pass).slice(0,limit);
 }
-return{localISO,minutes,hh,now,holiday,service,candidates,departures};
+function passages(stop,iso=localISO(),from=now(),limit=5){
+ if(!data.stops[stop]||service(iso).kind!=='weekday')return[];
+ const rows=[];
+ for(const r of Object.values(data.routes)){
+  if(r.day!=='weekday')continue;
+  const times=(data.schedule[r.terminal]||{})[r.line]||[];
+  for(let j=0;j<r.stops.length-1;j++){
+   if(r.stops[j][0]!==stop)continue;
+   times.forEach((t,i)=>{
+    const offset=r.stops[j][1],pass=minutes(t)+offset;
+    if(pass<from||pass>=1440)return;
+    if(r.terminal==='ru'&&(r.line==='D'||r.line==='I')&&i===times.length-1&&offset>(r.line==='D'?15:10))return;
+    rows.push({line:r.line,pass,scheduledOrigin:r.originScheduled!==false&&offset===0});
+   });
+  }
+ }
+ rows.sort((a,b)=>a.pass-b.pass);
+ const seen=new Set();
+ return rows.filter(x=>{const key=x.line+'|'+x.pass;if(seen.has(key))return false;seen.add(key);return true}).slice(0,limit);
+}
+return{localISO,minutes,hh,now,holiday,service,candidates,departures,passages};
 })();
