@@ -6,7 +6,7 @@ Ferramenta independente de consulta de horários e trajetos do Circular da UFRN.
 ## Navegação
 - **Consultar:** origem e destino, melhor opção estimada, percurso e próximos horários na parada de origem
 - **Tabela:** horários de referência por linha e terminal, incluindo informação histórica de sábado
-- **Mais ferramentas:** uma página separada (`extras.html`) para planejamento em outra data, favoritos de paradas, consulta por parada e compartilhamento de trajetos
+- **Mais ferramentas:** uma página separada (`extras.html`) para consulta de horários em outro dia, favoritos de paradas, consulta por parada e compartilhamento de trajetos
 
 O conteúdo principal está em `index.html`. Os módulos complementares não são carregados ali.
 
@@ -37,3 +37,6 @@ Não exige conta, não solicita geolocalização e não monitora ônibus. Prefer
 Testes de sintaxe e lógica de feriados, trajetos e estrutura executados em 11/10/2026. Antes de uma divulgação com promessa de precisão, conferir horários de operação em campo e fazer teste manual de interface em celular e computador. Não confundir uma tabela de referência com confirmação da viagem.
 
 Projeto independente da UFRN e STTU.
+
+## Consulta de outro dia (ajuste de usabilidade)
+A ferramenta da segunda página foi renomeada de **Planejar viagem** para **Consultar outro dia**. O usuário informa origem, destino, data e horário a partir do qual pretende embarcar. O resultado evidencia a primeira opção por chegada estimada, com horário de embarque, chegada e lista de paradas recolhível; alternativas também ficam recolhidas. A consulta usa `vdc-core.js`, sem confirmar operação em tempo real. Feriados, sábados e domingos apresentam apenas avisos. O módulo segue reversível pela configuração `futurePlanner`.
