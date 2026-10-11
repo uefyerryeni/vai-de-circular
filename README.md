@@ -44,3 +44,14 @@ Os módulos ficam isolados em `vdc-modules.js` e `vdc-modules.css`, sem alterar 
 **Como reverter:** no fim de `index.html`, altere para `false` uma ou mais opções de `window.VDC_FEATURES`. Para remover completamente a expansão, exclua o `div#vdc-extras` e as referências aos dois arquivos `vdc-modules` no HTML. Os arquivos principais permanecem independentes. O compartilhamento exige que o módulo `sharing` esteja ligado no destino.
 
 Observação: os horários calculados para paradas intermediárias são aproximações derivadas dos deslocamentos cadastrados no projeto. Não devem ser interpretados como localização ao vivo ou garantia de embarque. 
+
+## Planejador de outra data (versão 1.2)
+Módulo isolado em `vdc-future.js` e `vdc-future.css`. O formulário usa como exemplo **13/10/2026, 07:30, Terminal RU → Reitoria**. A data e o horário podem ser alterados; o planejador original “Agora” continua independente.
+
+- Consulta as rotas e tabelas locais para dias úteis, sem afirmar operação efetiva.
+- Aos sábados, domingos e feriados nacionais (além de Carnaval e Corpus Christi como datas de cautela), apresenta aviso, sem recomendar ônibus.
+- Não há API externa nem rastreamento de veículos. Feriados locais, recessos acadêmicos e mudanças extraordinárias não são identificados automaticamente.
+- Para desativar **somente** esse módulo, altere `futurePlanner:true` para `futurePlanner:false` em `window.VDC_FEATURES` no `index.html`.
+- Para retirá-lo inteiramente, remova apenas `#vdc-future` e as referências a `vdc-future.js` e `vdc-future.css`.
+
+Observação: esta é uma estimativa pela tabela, não confirmação de circulação. Verificação em navegador e em campo ainda é necessária antes de tratar os resultados como validados.
