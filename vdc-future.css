@@ -1,0 +1,13 @@
+/* Planejador futuro independente, VDC 1.2 */
+.vdc-future{padding:18px;margin:14px 0;background:var(--surface);border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow)}
+.vdc-future h2{margin:0;font-size:21px}.vdc-future-sub{font-size:13px;color:var(--muted);line-height:1.5}
+.vdc-future-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}
+.vdc-future-field{display:grid;gap:6px;font-size:12px;font-weight:700;min-width:0}.vdc-future-field input,.vdc-future-field select{min-width:0;width:100%;border:1px solid var(--rule);border-radius:8px;padding:12px 9px;min-height:46px;background:var(--surface);color:var(--text);font:inherit;font-size:14px}
+.vdc-future-go{grid-column:1/-1;background:var(--yellow);color:#17212a;border:0;border-radius:9px;min-height:48px;font:inherit;font-weight:800;cursor:pointer}
+.vdc-future-result{margin-top:12px}.vdc-future-alert{border-left:4px solid #d79b15;padding:12px 14px;background:rgba(215,155,21,.10);border-radius:8px;font-size:13px;line-height:1.5}
+.vdc-future-note{font-size:12px;color:var(--muted);line-height:1.5}
+.vdc-future-trip{border:1px solid var(--rule);padding:12px;margin:8px 0;border-radius:10px}
+.vdc-future-trip-head{display:flex;align-items:center;gap:10px;font-size:13px}.vdc-future-chip{min-width:36px;text-align:center;padding:6px;border-radius:6px;background:#2b7331;color:#fff}.vdc-future-chip[data-line=I]{background:#6a1b9a}.vdc-future-chip[data-line=ER]{background:#b85400}.vdc-future-chip[data-line=ECT]{background:#1976d2}
+.vdc-future-trip-times{font-size:17px;font-weight:750;margin-top:9px;font-variant-numeric:tabular-nums}.vdc-future-trip-route{font-size:12px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+@media(max-width:760px){.vdc-future-form{grid-template-columns:repeat(2,minmax(0,1fr))}.vdc-future{padding:15px}}
+@media(max-width:420px){.vdc-future-form{grid-template-columns:1fr}}
