@@ -289,3 +289,27 @@ body.dark .go,body.dark .vdc-action,body.dark .vdc-future-go,body.dark .to-top{c
 .hero-share-icon{font-size:17px;line-height:1}
 @media(max-width:720px){.hero-head{grid-template-columns:1fr;gap:11px}.hero-share-group{width:auto;max-width:320px}.hero-share{justify-self:start}}
 @media(max-width:590px){.hero-share{min-height:43px;padding:9px 13px;font-size:12.5px}}
+
+/* Mais ferramentas: ações nítidas e formulários compactos no celular. */
+.vdc-share-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.vdc-share-actions .vdc-action,.vdc-whatsapp{flex:1 1 170px;display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:10px 12px;font-size:13px;font-weight:800;border-radius:7px;text-decoration:none;line-height:1.35}
+.vdc-whatsapp{background:#166a45;border:1px solid #125b3b;color:#fff}
+.vdc-whatsapp:hover{background:#105737;color:#fff}
+.vdc-whatsapp[aria-disabled=true]{opacity:.45;pointer-events:none}
+@media(max-width:590px){
+ .extras-page{padding:18px 0 42px}
+ .extras-page .intro{margin-bottom:12px}
+ .extras-page .intro p{line-height:1.5}
+ #vdc-extras{gap:10px;margin:10px 0 17px}
+ .vdc-module,.vdc-future{padding:15px}
+ .vdc-next-day .vdc-future-sub{margin-bottom:12px}
+ .vdc-next-day .vdc-future-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .vdc-next-day .vdc-future-field:nth-child(-n+2){grid-column:1/-1}
+ .vdc-next-day .vdc-future-result{margin-top:14px;padding-top:14px}
+ .vdc-plan-featured{padding:14px}
+ .vdc-plan-times strong{font-size:clamp(21px,6vw,29px)}
+}
+@media(max-width:380px){
+ .vdc-next-day .vdc-future-form{grid-template-columns:1fr}
+ .vdc-next-day .vdc-future-field{grid-column:1/-1}
+}
