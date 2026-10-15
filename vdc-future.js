@@ -52,8 +52,10 @@ function render(){
  if(!iso||!time.value){msg('Escolha o dia e a hora da consulta.');return}
  if(iso<core.localISO()){msg('Escolha hoje ou um dia futuro.');return}
  if(from===to){msg('Escolha uma origem e um destino diferentes.');return}
+ const today=iso===core.localISO(),requested=core.minutes(time.value);
+ const fromMinutes=today?Math.max(requested,core.now()):requested;
  const heading=el('div','vdc-plan-result-heading');
- heading.append(el('strong','',data.stops[from]+' → '+data.stops[to]),el('span','',dateText(iso)+' · a partir das '+time.value));
+ heading.append(el('strong','',data.stops[from]+' → '+data.stops[to]),el('span','',dateText(iso)+(today&&requested<fromMinutes?' · próximas saídas a partir de agora':' · a partir das '+time.value)));
  output.append(heading);
  const info=core.service(iso);
  if(info.kind!=='weekday'){
@@ -61,8 +63,6 @@ function render(){
   msg(reason+' Por isso, não é possível recomendar uma saída com segurança.','vdc-future-alert');
   const link=el('a','vdc-plan-table-link','Consultar tabelas de referência');link.href='./#horarios';output.append(link);return;
  }
- const today=iso===core.localISO(),requested=core.minutes(time.value);
- const fromMinutes=today?Math.max(requested,core.now()):requested;
  if(today&&requested<fromMinutes)msg('O horário escolhido já passou. Mostramos as opções a partir de agora.','vdc-plan-disclaimer');
  const trips=core.candidates(from,to,iso,fromMinutes,30);
  if(!trips.length){
