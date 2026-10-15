@@ -278,3 +278,10 @@ body.dark .go,body.dark .vdc-action,body.dark .vdc-future-go,body.dark .to-top{c
  .vdc-plan-times{gap:8px}
  .vdc-plan-result-heading{display:grid;gap:4px}
 }
+
+/* Convite compacto para compartilhar o projeto, sem interferir na consulta. */
+.share-invite{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 18px;padding:12px 4px 0}
+.share-invite p{margin:0;color:var(--muted);font-size:12.5px;font-weight:650}
+.share-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 15px;border-radius:7px;background:#176b46;color:#fff;font-size:12.5px;font-weight:800;text-decoration:none;white-space:nowrap}
+.share-whatsapp:hover{background:#105637}
+@media(max-width:590px){.share-invite{align-items:stretch}.share-whatsapp{width:100%}}
