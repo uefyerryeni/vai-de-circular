@@ -61,8 +61,18 @@ function render(){
   msg(reason+' Por isso, não é possível recomendar uma saída com segurança.','vdc-future-alert');
   const link=el('a','vdc-plan-table-link','Consultar tabelas de referência');link.href='./#horarios';output.append(link);return;
  }
- const trips=core.candidates(from,to,iso,core.minutes(time.value),30);
- if(!trips.length){msg('Não há horários de referência para esse trajeto após a hora selecionada. Experimente outro horário.','vdc-future-alert');return}
+ const today=iso===core.localISO(),requested=core.minutes(time.value);
+ const fromMinutes=today?Math.max(requested,core.now()):requested;
+ if(today&&requested<fromMinutes)msg('O horário escolhido já passou. Mostramos as opções a partir de agora.','vdc-plan-disclaimer');
+ const trips=core.candidates(from,to,iso,fromMinutes,30);
+ if(!trips.length){
+  const directExists=core.candidates(from,to,iso,0,1).length>0;
+  const note=!directExists
+   ?'Não encontramos uma linha que faça esse trajeto diretamente. Pode ser necessário trocar de ônibus ou caminhar parte do percurso.'
+   :today?'Não há mais horários de referência para hoje. Consulte outro dia.'
+   :'Não há horários de referência após a hora escolhida. Experimente outro horário.';
+  msg(note,'vdc-future-alert');return;
+ }
  msg('Previsões calculadas a partir da tabela de dias úteis. Não confirmam que o ônibus esteja circulando.','vdc-plan-disclaimer');
  output.append(tripCard(trips[0],true));
  if(trips.length>1){
