@@ -4,11 +4,6 @@ const FLAGS=Object.assign({favorites:true,stopDepartures:true,serviceStatus:true
 const data=window.VDC_DATA,core=window.VDC_CORE;if(!data||!core)return;
 const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n};
 const mount=document.querySelector('#vdc-extras');if(!mount)return;
-const now=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
-const minute=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
-const fmt=t=>String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
-const weekday=()=>{const d=new Date().getDay();return d>0&&d<6};
-const saturday=()=>new Date().getDay()===6;
 const safeGet=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const safeSet=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
 const storage='vdc-favorite-stops-1';
@@ -31,9 +26,10 @@ if(quick){
 }
 function renderFavorites(){
  if(!favWrap)return;favWrap.replaceChildren();
+ const isFavorite=favorites.includes(select.value),add=quick.querySelector('.vdc-action');
+ if(add){add.textContent=isFavorite?'★ Remover favorito':'☆ Favoritar';add.setAttribute('aria-pressed',String(isFavorite))}
  if(!favorites.length){favWrap.append(el('span','vdc-small','Nenhuma parada favorita.'));return}
  for(const id of favorites){const b=el('button','vdc-favorite', '★ '+data.stops[id]);b.type='button';b.setAttribute('aria-pressed',String(select.value===id));b.onclick=()=>{select.value=id;select.onchange()};favWrap.append(b)}
- const add=quick.querySelector('.vdc-action');if(add)add.textContent=favorites.includes(select.value)?'★ Remover favorito':'☆ Favoritar';
 }
 function renderStop(){
  if(!results)return;
@@ -63,13 +59,25 @@ if(FLAGS.sharing){
  fields.append(field('De onde',a),field('Para onde',b));
  const button=el('button','vdc-action','Compartilhar trajeto');button.type='button';
  const feedback=el('p','vdc-small');feedback.setAttribute('aria-live','polite');
+ const shareUrl=()=>{const url=new URL('./',location.href);url.searchParams.set('origem',a.value);url.searchParams.set('destino',b.value);return url.toString()};
+ const actions=el('div','vdc-share-actions');
+ const whatsapp=el('a','vdc-whatsapp','Enviar no WhatsApp');
+ whatsapp.target='_blank';whatsapp.rel='noopener noreferrer';
+ const updateWhatsApp=()=>{
+  const valid=a.value!==b.value;
+  whatsapp.href=valid?'https://wa.me/?text='+encodeURIComponent('Veja este trajeto no Vai de Circular: '+shareUrl()):'#';
+  whatsapp.setAttribute('aria-disabled',String(!valid));whatsapp.tabIndex=valid?0:-1;
+ };
+ a.addEventListener('change',updateWhatsApp);b.addEventListener('change',updateWhatsApp);
+ whatsapp.onclick=e=>{if(a.value===b.value){e.preventDefault();feedback.textContent='Escolha origem e destino diferentes.'}};
+ actions.append(button,whatsapp);updateWhatsApp();
  button.onclick=async()=>{
   if(a.value===b.value){feedback.textContent='Escolha origem e destino diferentes.';return}
-  const url=new URL('./',location.href);url.searchParams.set('origem',a.value);url.searchParams.set('destino',b.value);
-  try{if(navigator.share){await navigator.share({title:'Vai de Circular',url:url.toString()});feedback.textContent='Opções de compartilhamento abertas.';return}}catch(e){if(e.name==='AbortError')return}
-  try{await navigator.clipboard.writeText(url.toString());feedback.textContent='Link copiado.'}
-  catch{feedback.replaceChildren();const input=el('input','vdc-select');input.value=url.toString();input.readOnly=true;input.setAttribute('aria-label','Link para copiar');feedback.append(input);input.select()}
+  const url=shareUrl();
+  try{if(navigator.share){await navigator.share({title:'Vai de Circular',url});feedback.textContent='Opções de compartilhamento abertas.';return}}catch(e){if(e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(url);feedback.textContent='Link copiado.'}
+  catch{feedback.replaceChildren();const input=el('input','vdc-select');input.value=url;input.readOnly=true;input.setAttribute('aria-label','Link para copiar');feedback.append(input);input.select()}
  };
- share.append(fields,button,feedback);
+ share.append(fields,actions,feedback);
 }
 })();
